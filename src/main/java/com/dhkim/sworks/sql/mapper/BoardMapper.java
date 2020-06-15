@@ -81,7 +81,7 @@ public interface BoardMapper {
 	 * @return int
 	 * @throws SQLException
 	 */
-	public int removeBoard(Board board) throws SQLException;
+	public int deleteBoard(Board board) throws SQLException;
 
 	/**
 	 * @param board

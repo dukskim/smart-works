@@ -254,7 +254,7 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 				
 				// 하위 게시글 삭제
 				bod.setBoardNm(board.getBoardNm());
-				boardMapper.removeBoard(bod);
+				boardMapper.deleteBoard(bod);
 			}
 		}
 		
@@ -289,7 +289,7 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 		FileControlUtil.deleteDirectory(baseFilePath + "/" + board.getBoardId() + "/" + board.getBoardSeq());
 		
 		// 게시글 삭제
-		boardMapper.removeBoard(board);
+		boardMapper.deleteBoard(board);
 	}
 
 	@Override
