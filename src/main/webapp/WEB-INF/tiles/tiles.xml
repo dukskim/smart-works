@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD tiles Configuration 3.0//EN"
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+	
+<tiles-definitions>
+
+	<definition name="default_layout" template="/WEB-INF/jsp/layout/default_layout.jsp">
+		<put-attribute name="title" value="Smart Portal!!" />
+		<put-attribute name="header" value="/WEB-INF/jsp/common/header.jsp" />
+		<put-attribute name="subHeader" value="/WEB-INF/jsp/common/blank.jsp" />
+		<put-attribute name="subject" value="/WEB-INF/jsp/common/subject.jsp" />
+		<put-attribute name="left" value="" />
+		<put-attribute name="right" value="/WEB-INF/jsp/common/right.jsp" />
+		<put-attribute name="content" value="/WEB-INF/jsp/common/blank.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/common/footer.jsp" />
+	</definition>
+
+	<definition name="/board/*.tiles" extends="default_layout">
+		<put-attribute name="subHeader" value="/WEB-INF/jsp/common/subHeader_board.jsp" />
+		<put-attribute name="content" value="/WEB-INF/jsp/board/{1}.jsp" />
+	</definition>
+	<definition name="/home/*.tiles" extends="default_layout">
+		<put-attribute name="subHeader" value="/WEB-INF/jsp/common/subHeader_home.jsp" />
+		<put-attribute name="content" value="/WEB-INF/jsp/home/{1}.jsp" />
+	</definition>
+	<definition name="/user/*.tiles" extends="default_layout">
+		<put-attribute name="subHeader" value="/WEB-INF/jsp/common/subHeader_user.jsp" />
+		<put-attribute name="content" value="/WEB-INF/jsp/user/{1}.jsp" />
+	</definition>
+	
+	<definition name="/*/*.tiles" extends="default_layout">
+		<put-attribute name="content" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+
+</tiles-definitions>

@@ -1,0 +1,68 @@
+@CHARSET "UTF-8";
+/* CSS Document */
+
+/* input button style*/
+input[type="button"] {font-size : 12px; border:0px;	font-family: Dotum, Gulim, Verdana, AppleGothic, sans-serif; vertical-align: middle; outline: 0;}
+
+/* 하얀색 버튼 */
+.btn_list40 { font-size:11px; color:#565656; width:40px; height:20px; background:url(/resources/images/btn_list40.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0; text-align:center; text-indent:inherit;}
+.btn_list40:hover { color:#323232; background:url(/resources/images/btn_list40On.gif) repeat 0 0;}
+
+.btn_list50 { font-size:11px; color:#565656; width:50px; height:20px; background:url(/resources/images/btn_list50.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0; text-align:center; text-indent:inherit;}
+.btn_list50:hover { color:#323232; background:url(/resources/images/btn_list50On.gif) repeat 0 0;}
+
+.btn_list60 { font-size:11px; color:#565656; width:60px; height:20px; background:url(/resources/images/btn_list60.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0; text-align:center; text-indent:inherit;}
+.btn_list60:hover { color:#323232; background:url(/resources/images/btn_list60On.gif) repeat 0 0;}
+
+.btn_list70 { font-size:11px; color:#565656; width:70px; height:20px; background:url(/resources/images/btn_list70.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0; text-align:center; text-indent:inherit;}
+.btn_list70:hover { color:#323232; background:url(/resources/images/btn_list70On.gif) repeat 0 0;}
+
+.btn_list80 { font-size:11px; color:#565656; width:80px; height:20px; background:url(/resources/images/btn_list80.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0; text-align:center; text-indent:inherit;}
+.btn_list80:hover { color:#323232; background:url(/resources/images/btn_list80On.gif) repeat 0 0;}
+
+.btn_list90 { font-size:11px; color:#565656; width:90px; height:20px; background:url(/resources/images/btn_list90.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0; text-align:center; text-indent:inherit;}
+.btn_list90:hover { color:#323232; background:url(/resources/images/btn_list90On.gif) repeat 0 0;}
+
+
+
+/* 검색에서 사용하는 버튼*/
+.btn_search50 { font-size:12px; color:#ffffff; font-weight:bold; width:50px; height:25px; background:url(/resources/images/btn_search50.gif) repeat 0 0;  margin:0 0 0 3px; padding:1px 0 0 0;}
+.btn_search50:hover { color:#ffff00; background:url(/resources/images/btn_search50On.gif) repeat 0 0;}
+
+
+/*기본 사용하는 버튼 */
+.btn_basic50 { font-size:12px; color:#e6e6e6; width:50px; height:22px; background:url(/resources/images/btn_basic50.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic50:hover { color:#ffffff; background:url(/resources/images/btn_basic50On.gif) repeat 0 0;}
+
+
+.btn_basic60 { font-size:12px; color:#e6e6e6; width:60px; height:22px; background:url(/resources/images/btn_basic60.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic60:hover { color:#ffffff; background:url(/resources/images/btn_basic60On.gif) repeat 0 0;}
+
+.btn_basic70 { font-size:12px; color:#e6e6e6; width:70px; height:22px; background:url(/resources/images/btn_basic70.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic70:hover { color:#ffffff; background:url(/resources/images/btn_basic70On.gif) repeat 0 0;}
+
+.btn_basic80 { font-size:12px; color:#e6e6e6; width:80px; height:22px; background:url(/resources/images/btn_basic80.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic80:hover { color:#ffffff; background:url(/resources/images/btn_basic80On.gif) repeat 0 0;}
+
+.btn_basic90 { font-size:12px; color:#e6e6e6; width:90px; height:22px; background:url(/resources/images/btn_basic90.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic90:hover { color:#ffffff; background:url(/resources/images/btn_basic90On.gif) repeat 0 0;}
+
+.btn_basic110 { font-size:12px; color:#e6e6e6; width:110px; height:22px; background:url(/resources/images/btn_basic110.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic110:hover { color:#ffffff; background:url(/resources/images/btn_basic110On.gif) repeat 0 0;}
+
+.btn_basic130 { font-size:12px; color:#e6e6e6; width:130px; height:22px; background:url(/resources/images/btn_basic130.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_basic130:hover { color:#ffffff; background:url(/resources/images/btn_basic130On.gif) repeat 0 0;}
+
+.btn_basic50dis { font-size:12px; color:#828282; width:50px; height:22px;  background:url(/resources/images/btn_basic50dis.gif) repeat 0 0;margin:0 0 0 3px; padding:2px 0 0 0; cursor:default;}
+.btn_basic60dis { font-size:12px; color:#828282; width:60px; height:22px;  background:url(/resources/images/btn_basic60dis.gif) repeat 0 0;margin:0 0 0 3px; padding:2px 0 0 0; cursor:default;}
+.btn_basic70dis { font-size:12px; color:#828282; width:70px; height:22px;  background:url(/resources/images/btn_basic70dis.gif) repeat 0 0;margin:0 0 0 3px; padding:2px 0 0 0; cursor:default;}
+.btn_basic80dis { font-size:12px; color:#828282; width:80px; height:22px;  background:url(/resources/images/btn_basic80dis.gif) repeat 0 0;margin:0 0 0 3px; padding:2px 0 0 0; cursor:default;}
+.btn_basic90dis { font-size:12px; color:#828282; width:90px; height:22px;  background:url(/resources/images/btn_basic90dis.gif) repeat 0 0;margin:0 0 0 3px; padding:2px 0 0 0; cursor:default;}
+.btn_basic110dis { font-size:12px; color:#828282; width:110px; height:22px;  background:url(/resources/images/btn_basic110dis.gif) repeat 0 0;margin:0 0 0 3px; padding:2px 0 0 0; cursor:default;}
+
+/*팝업 사용하는 버튼 */
+.btn_popup50 { font-size:12px; color:#646464; width:50px; height:22px; background:url(/resources/images/btn_popup50.gif) repeat 0 0;  margin:0 0 0 3px; padding:2px 0 0 0;}
+.btn_popup50:hover { color:#323232; background:url(/resources/images/btn_popup50On.gif) repeat 0 0;}
+
+/* 버튼처럼 mouse point */
+.cur_pnt_1 {cursor: pointer; color: #6e6e6e;}

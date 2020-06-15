@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.BoardMapper">
+	<resultMap type="board" id="resultMap-board">
+		<result column="BOARD_SEQ" 			property="boardSeq"/>
+		<result column="USER_ID" 			property="userId"/>
+		<result column="TITLE" 				property="title"/>
+		<result column="BOARD_DIV" 			property="boardDiv"/>
+		<result column="BOARD_CONTENT" 		property="boardContent"/>
+		<result column="REF_BOARD_SEQ" 		property="refBoardSeq"/>
+		<result column="SHOW_CNT" 			property="showCnt"/>
+		<result column="RECOM_CNT" 			property="recomCnt"/>
+		<result column="POINT" 				property="point"/>
+		<result column="BOARD_FAMILY" 		property="boardFamily"/>
+		<result column="BOARD_FAMILY_SORT" 	property="boardFamilySort"/>
+		<result column="BOARD_STEP" 		property="boardStep"/>
+		<result column="DEL_YN" 			property="delYn"/>
+		<result column="REG_DT" 			property="regDt"/>
+		<result column="NICK_NM" 			property="nickNm"/>
+		<result column="COMMENT_CNT" 		property="commentCnt"/>
+	</resultMap>
+	
+	<update id="create" parameterType="String">
+		CREATE TABLE ${value}
+		(
+			BOARD_SEQ			BIGINT			NOT NULL					COMMENT '게시판SEQ', 
+			USER_ID				VARCHAR(50)									COMMENT '사용자아이디',	
+			TITLE				VARCHAR(200)								COMMENT '제목',
+			BOARD_DIV			VARCHAR(10)									COMMENT '글구분(게시글,답글,댓글)',
+			BOARD_CONTENT		TEXT										COMMENT '내용',
+			REF_BOARD_SEQ		BIGINT										COMMENT '참조글SEQ',
+			SHOW_CNT			INT											COMMENT '조회수',
+			RECOM_CNT			INT											COMMENT '추천수',
+			POINT				BIGINT										COMMENT '점수',
+			BOARD_FAMILY		BIGINT										COMMENT '글그룹', 
+			BOARD_FAMILY_SORT	INT											COMMENT '글그룹정렬', 
+			BOARD_STEP			TINYINT										COMMENT '몇번째답변', 
+			DEL_YN				CHAR(1)		DEFAULT 'N'						COMMENT '삭제여부',
+			REG_DT				DATETIME									COMMENT '등록일시',
+			PRIMARY KEY(BOARD_SEQ),
+			INDEX IDX_BOARD_FAMILY (BOARD_FAMILY, BOARD_FAMILY_SORT),
+			FOREIGN KEY(USER_ID) REFERENCES RT_USER_INFO(USER_ID)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	</update>
+	
+	<update id="drop" parameterType="String">
+		DROP TABLE ${value}
+	</update>
+	
+	<insert id="insertBoard" parameterType="board" >
+		<!-- selectKey 로 가져온 값은 스트링값을 ${}형태로 출력이 안되네...
+		<selectKey order="BEFORE" resultType="String" keyProperty="boardNm">
+		SELECT
+			BOARD_NM
+		FROM 
+			RT_BOARD_GROUP
+		WHERE 
+			BOARD_ID = #{boardId}
+		</selectKey> -->
+		<selectKey order="BEFORE" resultType="int" keyProperty="boardSeq">
+		SELECT
+			IFNULL(MAX(BOARD_SEQ)+1, 1) 
+		FROM 
+			${boardNm}
+		</selectKey> 
+		INSERT INTO ${boardNm}
+		(
+			BOARD_SEQ
+			, USER_ID		
+			, TITLE	
+			, BOARD_DIV
+			, BOARD_CONTENT
+			, REF_BOARD_SEQ
+			, SHOW_CNT	
+			, RECOM_CNT		
+			, POINT		
+			, BOARD_FAMILY 
+			, BOARD_FAMILY_SORT 
+			, BOARD_STEP 
+			, DEL_YN		
+			, REG_DT		
+		)
+		VALUES
+		(
+			<choose>
+			<when test="boardSeq  == null">
+			0
+			</when>
+			<otherwise>
+			#{boardSeq}
+			</otherwise>
+			</choose>
+			, #{userId}
+			, #{title}
+			<choose>
+			<when test="boardDiv == null">
+			, '1'
+			</when>
+			<otherwise>
+			, #{boardDiv}
+			</otherwise>
+			</choose>
+			, #{boardContent}
+			<choose>
+			<when test="refBoardSeq == 0 or refBoardSeq == -1">
+			, NULL
+			</when>
+			<otherwise>
+			, #{refBoardSeq}
+			</otherwise>
+			</choose>
+			, #{showCnt}
+			, #{recomCnt}	
+			, #{point}
+			<choose>
+			<when test="refBoardSeq == 0 or refBoardSeq == -1">
+			, #{boardSeq} 
+			</when>
+			<otherwise>
+			, #{boardFamily} 
+			</otherwise>
+			</choose>
+			, #{boardFamilySort} 
+			, #{boardStep}
+			<choose>
+			<when test="delYn == null">
+			, 'N'
+			</when>
+			<otherwise>
+			, UPPER(#{delYn})
+			</otherwise>
+			</choose>
+			, NOW()	
+		)
+	</insert>
+	
+	<update id="updateBoard" parameterType="board">
+		UPDATE ${boardNm} SET
+			TITLE = #{title},
+			BOARD_CONTENT = #{boardContent}
+			<if test="userId != null">
+			, USER_ID = #{userId}
+			</if>
+		WHERE
+			BOARD_SEQ = #{boardSeq}
+	</update>
+	
+	<update id="updateNullBoardUserId" parameterType="board">
+	<![CDATA[ 
+		UPDATE ${boardNm} SET
+			USER_ID = null
+		WHERE
+			USER_ID = #{userId}
+	]]>
+	</update>
+	
+	<select id="selectBoard" parameterType="board" resultMap="resultMap-board">
+		SELECT
+			A.BOARD_SEQ AS BOARD_SEQ
+			, A.USER_ID AS USER_ID		
+			, A.TITLE	AS TITLE
+			, A.BOARD_DIV AS BOARD_DIV
+			, A.BOARD_CONTENT AS BOARD_CONTENT
+			, A.REF_BOARD_SEQ AS REF_BOARD_SEQ
+			, A.SHOW_CNT AS SHOW_CNT	 
+			, A.RECOM_CNT AS RECOM_CNT		 
+			, A.POINT AS POINT		
+			, A.BOARD_FAMILY AS BOARD_FAMILY 
+			, A.BOARD_FAMILY_SORT AS BOARD_FAMILY_SORT
+			, A.BOARD_STEP AS BOARD_STEP
+			, A.DEL_YN AS	DEL_YN	
+			, A.REG_DT AS REG_DT
+			, B.NICK_NM AS NICK_NM		
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		<where>
+			<if test="boardSeq != null and boardSeq != -1">
+			A.BOARD_SEQ = #{boardSeq}
+			</if>
+			<if test="userId != null">
+			AND A.USER_ID = #{userId}
+			</if>
+			<if test="boardDiv != null">
+			AND A.BOARD_DIV = #{boardDiv}
+			</if>
+			<if test="delYn != null">
+			AND A.DEL_YN = #{delYn}
+			</if>
+		</where>
+	</select>
+	<select id="selectRecentBoardList" parameterType="board" resultMap="resultMap-board">
+		SELECT 
+			A.BOARD_SEQ AS BOARD_SEQ
+			, A.USER_ID AS USER_ID		
+			, A.TITLE	AS TITLE
+			, A.BOARD_DIV AS BOARD_DIV
+			, A.BOARD_CONTENT AS BOARD_CONTENT
+			, A.REF_BOARD_SEQ AS REF_BOARD_SEQ
+			, A.SHOW_CNT AS SHOW_CNT	 
+			, A.RECOM_CNT AS RECOM_CNT		 
+			, A.POINT AS POINT		
+			, A.BOARD_FAMILY AS BOARD_FAMILY 
+			, A.BOARD_FAMILY_SORT AS BOARD_FAMILY_SORT
+			, A.BOARD_STEP AS BOARD_STEP
+			, A.DEL_YN AS	DEL_YN	
+			, A.REG_DT AS REG_DT
+			, B.NICK_NM AS NICK_NM
+			, IFNULL(C.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA 
+				GROUP BY AA.BOARD_SEQ
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		WHERE
+			A.DEL_YN = 'N'
+		ORDER BY A.REG_DT DESC 
+		<if test="chkPaging">
+		<include refid="Base.paging"/>
+		</if>
+	</select>
+	<select id="selectRecentBoardListCnt" parameterType="board" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA 
+				GROUP BY AA.BOARD_SEQ
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		WHERE
+			A.DEL_YN = 'N'
+		ORDER BY A.REG_DT DESC 
+	</select>	
+	<select id="selectHotBoardList" parameterType="board" resultMap="resultMap-board">
+		SELECT 
+			A.BOARD_SEQ AS BOARD_SEQ
+			, A.USER_ID AS USER_ID		
+			, A.TITLE	AS TITLE
+			, A.BOARD_DIV AS BOARD_DIV
+			, A.BOARD_CONTENT AS BOARD_CONTENT
+			, A.REF_BOARD_SEQ AS REF_BOARD_SEQ
+			, A.SHOW_CNT AS SHOW_CNT	 
+			, A.RECOM_CNT AS RECOM_CNT		 
+			, A.POINT AS POINT		
+			, A.BOARD_FAMILY AS BOARD_FAMILY 
+			, A.BOARD_FAMILY_SORT AS BOARD_FAMILY_SORT
+			, A.BOARD_STEP AS BOARD_STEP
+			, A.DEL_YN AS	DEL_YN	
+			, A.REG_DT AS REG_DT
+			, B.NICK_NM AS NICK_NM
+			, IFNULL(C.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA
+				GROUP BY AA.BOARD_SEQ 			
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		WHERE
+			A.DEL_YN = 'N'
+			<if test="duringMonth != null and duringMonth != -1">
+			AND 
+				(
+					A.REG_DT BETWEEN SUBDATE(SUBDATE(CURDATE(), INTERVAL DAYOFMONTH(CURDATE())-1 DAY), INTERVAL #{duringMonth} MONTH)
+					AND  NOW()
+				)
+			</if>
+		ORDER BY A.RECOM_CNT DESC, A.REG_DT DESC 
+		<if test="chkPaging">
+		<include refid="Base.paging"/>
+		</if>
+	</select>
+	<select id="selectHotBoardListCnt" parameterType="board" resultType="int">
+		SELECT
+			COUNT(*) 
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA 
+				GROUP BY AA.BOARD_SEQ
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		<where>
+			A.DEL_YN = 'N'
+			<if test="duringMonth != null and duringMonth != 0">
+			AND 
+				(
+					A.REG_DT BETWEEN SUBDATE(SUBDATE(CURDATE(), INTERVAL DAYOFMONTH(CURDATE())-1 DAY), INTERVAL #{duringMonth} MONTH)
+					AND  NOW()
+				)
+			</if>
+		</where>
+	</select>
+	<select id="selectBoardList" parameterType="board" resultMap="resultMap-board">
+		SELECT 
+			A.BOARD_SEQ AS BOARD_SEQ
+			, A.USER_ID AS USER_ID		
+			, A.TITLE	AS TITLE
+			, A.BOARD_DIV AS BOARD_DIV
+			, A.BOARD_CONTENT AS BOARD_CONTENT
+			, A.REF_BOARD_SEQ AS REF_BOARD_SEQ
+			, A.SHOW_CNT AS SHOW_CNT	 
+			, A.RECOM_CNT AS RECOM_CNT		 
+			, A.POINT AS POINT		
+			, A.BOARD_FAMILY AS BOARD_FAMILY 
+			, A.BOARD_FAMILY_SORT AS BOARD_FAMILY_SORT
+			, A.BOARD_STEP AS BOARD_STEP
+			, A.DEL_YN AS	DEL_YN	
+			, A.REG_DT AS REG_DT
+			, B.NICK_NM AS NICK_NM
+			, IFNULL(C.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA 
+				GROUP BY AA.BOARD_SEQ
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		<where>
+			<if test="userId != null">
+			A.USER_ID = #{userId}
+			</if>
+			<if test="title != null">
+			AND A.TITLE = #{title}
+			</if>
+			<if test="boardDiv != null">
+			AND A.BOARD_DIV = #{boardDiv} 
+			</if>
+			<if test="boardContent != null">
+			AND A.BOARD_CONTENT = #{boardContent}
+			</if>
+			<if test="refBoardSeq != null and refBoardSeq != -1">
+			AND A.REF_BOARD_SEQ = #{refBoardSeq}
+			</if>
+			<if test="showCnt != null and showCnt != -1">
+			AND A.SHOW_CNT = #{showCnt}
+			</if>
+			<if test="recomCnt != null and recomCnt != -1">
+			AND A.RECOM_CNT = #{recomCnt}
+			</if>
+			<if test="point != null and point != -1">
+			AND A.POINT = #{point}
+			</if>
+			<if test="delYn != null">
+			AND A.DEL_YN = UPPER(#{delYn})
+			</if>			
+			<if test="nickNm != null">
+			AND B.NICK_NM = #{nickNm}
+			</if>			
+		</where>
+		ORDER BY A.BOARD_FAMILY DESC, A.BOARD_FAMILY_SORT ASC, A.REG_DT DESC
+		<if test="chkPaging">
+		<include refid="Base.paging"/>
+		</if>
+	</select>
+	<select id="selectBoardListCnt" parameterType="board" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA
+				GROUP BY AA.BOARD_SEQ 
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		<where>
+			<if test="userId != null">
+			A.USER_ID = #{userId}
+			</if>
+			<if test="title != null">
+			AND A.TITLE = #{title}
+			</if>
+			<if test="boardDiv != null">
+			AND A.BOARD_DIV = #{boardDiv} 
+			</if>
+			<if test="boardContent != null">
+			AND A.BOARD_CONTENT = #{boardContent}
+			</if>
+			<if test="refBoardSeq != null and refBoardSeq != -1">
+			AND A.REF_BOARD_SEQ = #{refBoardSeq}
+			</if>
+			<if test="showCnt != null and showCnt != -1">
+			AND A.SHOW_CNT = #{showCnt}
+			</if>
+			<if test="recomCnt != null and recomCnt != -1">
+			AND A.RECOM_CNT = #{recomCnt}
+			</if>
+			<if test="point != null and point != -1">
+			AND A.POINT = #{point}
+			</if>
+			<if test="delYn != null">
+			AND A.DEL_YN = UPPER(#{delYn})
+			</if>
+			<if test="nickNm != null">
+			AND B.NICK_NM = #{nickNm}
+			</if>			
+		</where>
+	</select>
+	
+	<select id="selectSearchBoardList" parameterType="board" resultMap="resultMap-board">
+		SELECT 
+			A.BOARD_SEQ AS BOARD_SEQ
+			, A.USER_ID AS USER_ID
+			, A.TITLE AS TITLE
+			, A.BOARD_DIV AS BOARD_DIV
+			, A.BOARD_CONTENT AS BOARD_CONTENT
+			, A.REF_BOARD_SEQ AS REF_BOARD_SEQ
+			, A.SHOW_CNT AS SHOW_CNT
+			, A.RECOM_CNT AS RECOM_CNT
+			, A.POINT AS POINT
+			, A.BOARD_FAMILY AS BOARD_FAMILY
+			, A.BOARD_FAMILY_SORT AS BOARD_FAMILY_SORT
+			, A.BOARD_STEP AS BOARD_STEP
+			, A.DEL_YN AS DEL_YN
+			, A.REG_DT AS REG_DT
+			, B.NICK_NM AS NICK_NM
+			, IFNULL(C.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA
+				GROUP BY AA.BOARD_SEQ 
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		<where>
+			<if test="delYn != null">
+			UPPER(A.DEL_YN) = UPPER(#{delYn})
+			</if>
+			<if test="boardDiv != null">
+			AND A.BOARD_DIV = #{boardDiv}
+			</if>
+			<trim prefix="AND (" prefixOverrides="AND|OR" suffix=")">
+			<choose>
+			<when test="searchType == 1">
+			A.TITLE like '%' #{searchVal} '%'
+			</when>
+			<when test="searchType == 2">
+			A.BOARD_CONTENT like '%' #{searchVal} '%'
+			</when>
+			<when test="searchType == 3">
+			A.TITLE like '%' #{searchVal} '%'
+			OR A.BOARD_CONTENT like '%' #{searchVal} '%'
+			</when>
+			<when test="searchType == 4">
+			B.NICK_NM like '%' #{searchVal} '%'
+			</when>
+			</choose>
+			</trim>
+		</where>
+		ORDER BY BOARD_FAMILY DESC, BOARD_FAMILY_SORT ASC
+		<if test="chkPaging">
+		<include refid="Base.paging"/>
+		</if>
+	</select>	
+	<select id="selectSearchBoardListCnt" parameterType="board" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM
+			${boardNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		LEFT OUTER JOIN 
+			(
+				SELECT
+					AA.BOARD_SEQ AS BOARD_SEQ 
+					, COUNT(AA.BOARD_SEQ) AS COMMENT_CNT 
+				FROM 
+					${boardCommentNm} AA
+				GROUP BY AA.BOARD_SEQ 
+			) C
+			ON A.BOARD_SEQ = C.BOARD_SEQ	
+		<where>
+			<if test="delYn != null">
+			UPPER(A.DEL_YN) = UPPER(#{delYn})
+			</if>
+			<if test="boardDiv != null">
+			AND A.BOARD_DIV = #{boardDiv}
+			</if>
+			<trim prefix="AND (" prefixOverrides="AND|OR" suffix=")">
+			<choose>
+			<when test="searchType == 1">
+			A.TITLE like '%' #{searchVal} '%'
+			</when>
+			<when test="searchType == 2">
+			A.BOARD_CONTENT like '%' #{searchVal} '%'
+			</when>
+			<when test="searchType == 3">
+			A.TITLE like '%' #{searchVal} '%'
+			OR A.BOARD_CONTENT like '%' #{searchVal} '%'
+			</when>
+			<when test="searchType == 4">
+			B.NICK_NM like '%' #{searchVal} '%'
+			</when>
+			</choose>
+			</trim>
+		</where>
+	</select>	
+	
+	<update id="updateBoardFamilySort" parameterType="board">
+	<![CDATA[ 
+		UPDATE ${boardNm} SET
+			BOARD_FAMILY_SORT = BOARD_FAMILY_SORT + 1
+		WHERE
+			BOARD_FAMILY = #{boardFamily}
+		AND
+			BOARD_FAMILY_SORT >= #{boardFamilySort}
+		AND
+			BOARD_STEP <> 0
+	]]>
+	</update>
+	
+	<update id="updateShowCountPlus" parameterType="board">
+	<![CDATA[ 
+		UPDATE ${boardNm} SET
+			SHOW_CNT = SHOW_CNT + 1
+		WHERE
+			BOARD_SEQ = #{boardSeq}
+	]]>
+	</update>
+	
+	<update id="updateRecomCountPlus" parameterType="board">
+	<![CDATA[ 
+		UPDATE ${boardNm} SET
+			RECOM_CNT = RECOM_CNT + 1
+		WHERE
+			BOARD_SEQ = #{boardSeq}
+	]]>
+	</update>
+	
+	<delete id="deleteBoard" parameterType="board">
+		DELETE
+		FROM
+			${boardNm}
+		WHERE
+			BOARD_SEQ = ${boardSeq}
+	</delete>
+	<update id="procUnderIdLevel" parameterType="board" statementType="CALLABLE">
+		CALL pro_bd_exec(#{boardNm}, #{boardSeq})
+	</update>
+	<select id="selectBoardTreeUnderStep" parameterType="board" resultMap="resultMap-board" >
+		SELECT 
+			BOARD_SEQ
+			, USER_ID		
+			, TITLE	
+			, BOARD_DIV
+			, BOARD_CONTENT
+			, REF_BOARD_SEQ
+			, SHOW_CNT	
+			, RECOM_CNT		
+			, POINT		
+			, BOARD_FAMILY 
+			, BOARD_FAMILY_SORT 
+			, BOARD_STEP 
+			, DEL_YN		
+			, REG_DT		
+		FROM
+			${boardNm} A
+		JOIN 
+			IDLEVEL_T B
+		ON A.BOARD_SEQ = B.T_ID
+	</select>
+	<delete id="deleteTempTreeUnder">
+		DELETE FROM IDLEVEL_T
+	</delete>
+</mapper>

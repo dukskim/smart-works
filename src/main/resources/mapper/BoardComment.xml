@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.BoardCommentMapper">
+	<resultMap type="boardComment" id="resultMap-board">
+		<result column="COMMENT_SEQ" 		property="commentSeq"/>
+		<result column="BOARD_SEQ" 			property="boardSeq"/>
+		<result column="USER_ID" 			property="userId"/>
+		<result column="COMMENT_CONTENT"	property="commentContent"/>
+		<result column="REG_DT" 			property="regDt"/>
+		<result column="NICK_NM"			property="nickNm"/>
+	</resultMap>
+	
+	<update id="create" parameterType="String">
+		CREATE TABLE ${value}
+		(
+			COMMENT_SEQ		BIGINT			NOT NULL		COMMENT '댓글번호',	
+			BOARD_SEQ		BIGINT			NOT NULL		COMMENT '게시글번호',	
+			USER_ID			VARCHAR(20)		NOT NULL		COMMENT '사용자아이디', 
+			COMMENT_CONTENT	TEXT							COMMENT '내용',
+			REG_DT			DATETIME						COMMENT '등록일시',
+			PRIMARY KEY(COMMENT_SEQ)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	</update>
+	
+	<update id="drop" parameterType="String">
+		DROP TABLE ${value}
+	</update>
+	
+	<insert id="insertBoardComment" parameterType="boardComment" >
+		<selectKey order="BEFORE" resultType="int" keyProperty="commentSeq">
+		SELECT
+			IFNULL(MAX(COMMENT_SEQ)+1, 1) 
+		FROM 
+			${boardCommentNm}
+		</selectKey> 
+		INSERT INTO ${boardCommentNm}
+		(
+			COMMENT_SEQ
+			, BOARD_SEQ
+			, USER_ID
+			, COMMENT_CONTENT
+			, REG_DT		
+		)
+		VALUES
+		(
+			<choose>
+			<when test="commentSeq  == null">
+			0
+			</when>
+			<otherwise>
+			#{commentSeq}
+			</otherwise>
+			</choose>
+			, #{boardSeq}
+			, #{userId}
+			, #{commentContent}
+			, NOW()	
+		)
+	</insert>
+	
+	<select id="selectBoardCommentList" parameterType="boardComment" resultMap="resultMap-board">
+		SELECT 
+			A.COMMENT_SEQ AS COMMENT_SEQ
+			, A.BOARD_SEQ AS BOARD_SEQ
+			, A.USER_ID AS USER_ID
+			, A.COMMENT_CONTENT AS COMMENT_CONTENT
+			, A.REG_DT AS REG_DT
+			, B.NICK_NM AS NICK_NM
+		FROM
+			${boardCommentNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		<where>
+			<if test="boardSeq != null and boardSeq != -1">
+			A.BOARD_SEQ = #{boardSeq}
+			</if>
+		</where>
+		ORDER BY A.REG_DT DESC 
+		<if test="chkPaging">
+		<include refid="Base.paging"/>
+		</if>
+	</select>
+	<select id="selectBoardCommentListCnt" parameterType="board" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM
+			${boardCommentNm} A
+		LEFT OUTER JOIN
+			RT_USER_INFO B
+			ON A.USER_ID = B.USER_ID
+		WHERE
+			A.BOARD_SEQ = #{boardSeq}
+		ORDER BY A.REG_DT DESC 
+	</select>	
+	
+	<delete id="deleteBoardComment" parameterType="boardComment">
+		DELETE
+		FROM
+			${boardCommentNm}
+		<where>
+			<if test="boardSeq != null and boardSeq != -1">
+			BOARD_SEQ = #{boardSeq}
+			</if>
+			<if test="commentSeq != null and commentSeq != -1">
+			AND COMMENT_SEQ = ${commentSeq}
+			</if>
+		</where>
+	</delete>
+	
+	<update id="updateNullBoardCommentUserId" parameterType="boardComment">
+	<![CDATA[ 
+		UPDATE ${boardCommentNm} SET
+			USER_ID = null
+		WHERE
+			USER_ID = #{userId}
+	]]>
+	</update>
+</mapper>

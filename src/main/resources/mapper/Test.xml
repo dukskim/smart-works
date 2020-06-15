@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.TestMapper">
+	
+	<resultMap type="test" id="testMap">
+		<result property="aaa" column="A" />
+		<result property="bbb" column="B" />
+	</resultMap>
+	
+	
+	<select id="selectTest" parameterType="test" resultMap="testMap">
+		SELECT 
+			A
+			, B 
+		FROM 
+			TEST_T 
+		WHERE
+			A = #{aaa}
+	</select>
+	<insert id="insertTest" parameterType="test">
+		INSERT INTO TEST_T (
+			A, 
+			B
+		) VALUES (
+			#{aaa},
+			#{bbb}
+		)
+	</insert>
+	
+	<update id="createBoard" parameterType="String">
+		CREATE TABLE ${value}
+		(
+			BOARD_SEQ		INT				NOT NULL	COMMENT '게시판SEQ', 
+			USER_ID			VARCHAR(50)					COMMENT '사용자아이디',	
+			TITLE			VARCHAR(200)				COMMENT '제목',
+			BOARD_DIV		VARCHAR(10)					COMMENT '글구분',
+			BOARD_CONTENT	TEXT						COMMENT '내용',
+			REF_BOARD_SEQ	INT							COMMENT '참조글SEQ',
+			SHOW_CNT		INT							COMMENT '조회수',
+			RECOM_CNT		INT							COMMENT '추천수',
+			POINT			INT							COMMENT '점수',
+			DEL_YN			CHAR(1)		DEFAULT 'Y'		COMMENT '삭제여부',
+			REG_DT			DATETIME					COMMENT '등록일시',
+			PRIMARY KEY(BOARD_SEQ)
+		)
+	</update>
+</mapper>

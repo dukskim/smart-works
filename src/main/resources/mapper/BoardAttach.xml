@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.BoardAttachMapper">
+	<resultMap type="boardAttach" id="resultMap-boardAttach">
+		<result column="FILE_ID" 			property="fileId"/>
+		<result column="FILE_NM" 			property="fileNm"/>
+		<result column="REAL_FILE_PATH" 	property="realFilePath"/>
+		<result column="BOARD_SEQ" 			property="boardSeq"/>
+		<result column="BOARD_ID" 			property="boardId"/>
+		<result column="REG_DT" 			property="regDt"/>
+	</resultMap>
+	<insert id="insertBoardAttach">
+		<selectKey order="BEFORE" resultType="int" keyProperty="fileId">
+		SELECT
+			IFNULL(MAX(FILE_ID)+1, 1) 
+		FROM 
+			RT_BOARD_ATTACH
+		</selectKey> 
+		INSERT INTO RT_BOARD_ATTACH (
+			FILE_ID 
+			, FILE_NM	
+			, REAL_FILE_PATH
+			, BOARD_SEQ
+			, BOARD_ID
+			, REG_DT
+		) VALUE(
+			#{fileId}
+			, #{fileNm}	
+			, #{realFilePath}
+			, #{boardSeq}
+			, #{boardId}
+			, NOW()
+		)
+	</insert>
+	
+	<select id="selectBoardAttachList" parameterType="boardAttach" resultMap="resultMap-boardAttach">
+		SELECT
+			FILE_ID 
+			, FILE_NM	
+			, REAL_FILE_PATH
+			, BOARD_SEQ
+			, BOARD_ID
+			, REG_DT
+		FROM
+			RT_BOARD_ATTACH
+		<where>
+			<if test="boardId != null">
+			AND BOARD_ID = #{boardId} 
+			</if>
+			<if test="boardSeq > 0">
+			AND BOARD_SEQ = #{boardSeq}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectBoardAttach" parameterType="int" resultMap="resultMap-boardAttach">
+		SELECT
+			FILE_ID 
+			, FILE_NM	
+			, REAL_FILE_PATH
+			, BOARD_SEQ
+			, BOARD_ID
+			, REG_DT
+		FROM
+			RT_BOARD_ATTACH
+		<where>
+			<if test="value > 0">
+			FILE_ID = ${value} 
+			</if>
+		</where>
+	</select>
+	
+	<delete id="deleteBoardAttach" parameterType="boardAttach">
+	DELETE 
+	FROM
+		RT_BOARD_ATTACH
+	<where>
+		<if test="fileId > 0">
+		AND FILE_ID = #{fileId} 
+		</if>
+		<if test="fileNm != null">
+		AND FILE_NM = #{fileNm} 
+		</if>
+		<if test="realFilePath != null">
+		AND REAL_FILE_PATH = #{realFilePath} 
+		</if>
+		<if test="boardId != null">
+		AND BOARD_ID = #{boardId} 
+		</if>
+		<if test="boardSeq > 0">
+		AND BOARD_SEQ = #{boardSeq} 
+		</if>
+	</where>	
+		
+	</delete>
+
+</mapper>

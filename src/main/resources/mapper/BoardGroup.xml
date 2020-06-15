@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.BoardGroupMapper">
+
+	<resultMap type="boardGroup" id="resultMap-boardGroup">
+		<result column="BOARD_NM" 			property="boardNm"/>
+		<result column="BOARD_ID" 			property="boardId"/>
+		<result column="BOARD_KOR" 			property="boardKor"/>
+		<result column="BOARD_DETAIL" 		property="boardDetail"/>
+		<result column="BOARD_APPRAISAL_NM"	property="boardAppraisalNm"/>
+		<result column="BOARD_APPRAISAL_YN"	property="boardAppraisalYn"/>
+		<result column="BOARD_COMMENT_NM"	property="boardCommentNm"/>
+		<result column="BOARD_COMMENT_YN"	property="boardCommentYn"/>
+		<result column="SHOW_MAIN_YN"		property="showMainYn"/>
+		<result column="CATEGORY" 			property="category"/>
+		<result column="CATEGORY_NM" 		property="categoryNm"/>
+		<result column="SORT_SEQ" 			property="sortSeq"/>
+		<result column="USE_YN" 			property="useYn"/>
+		<result column="REG_DT" 			property="regDt"/>
+	</resultMap>
+
+	<select id="selectBoardGroup" parameterType="boardGroup" resultMap="resultMap-boardGroup">
+		SELECT 
+			A.BOARD_NM AS BOARD_NM
+			, A.BOARD_ID AS BOARD_ID
+			, A.BOARD_KOR AS BOARD_KOR
+			, A.BOARD_DETAIL AS BOARD_DETAIL
+			, A.BOARD_APPRAISAL_NM AS BOARD_APPRAISAL_NM
+			, A.BOARD_APPRAISAL_YN AS BOARD_APPRAISAL_YN
+			, A.BOARD_COMMENT_NM AS BOARD_COMMENT_NM
+			, A.BOARD_COMMENT_YN AS BOARD_COMMENT_YN
+			, A.SHOW_MAIN_YN AS SHOW_MAIN_YN
+			, A.CATEGORY AS CATEGORY
+			, A.SORT_SEQ AS SORT_SEQ
+			, A.USE_YN AS USE_YN
+			, A.REG_DT AS REG_DT
+			, B.CODE_NM AS CATEGORY_NM
+		FROM
+			RT_BOARD_GROUP A
+		JOIN
+			(
+			SELECT * FROM RT_CODE_INFO WHERE GROUP_CODE = 'B1100'
+			) B
+		ON A.CATEGORY = B.CODE_ID
+		<where>
+			<if test="boardNm != null">
+			A.BOARD_NM = #{boardNm}
+			</if>
+			<if test="boardId != null">
+			AND A.BOARD_ID = #{boardId}
+			</if>
+			<if test="useYn != null">
+			AND A.USE_YN = #{useYn}
+			</if>
+			<if test="boardCommentYn != null">
+			AND A.BOARD_COMMENT_YN = #{boardCommentYn}
+			</if>
+			<if test="showMainYn != null">
+			AND A.SHOW_MAIN_YN = #{showMainYn}
+			</if>
+		</where>
+	</select>
+	<select id="selectBoardGroupTableNmList" parameterType="boardGroup" resultMap="resultMap-boardGroup">
+		SELECT 
+			A.BOARD_NM AS BOARD_NM
+			, A.BOARD_ID AS BOARD_ID
+			, A.BOARD_KOR AS BOARD_KOR
+			, A.BOARD_DETAIL AS BOARD_DETAIL
+			, A.BOARD_APPRAISAL_NM AS BOARD_APPRAISAL_NM
+			, A.BOARD_APPRAISAL_YN AS BOARD_APPRAISAL_YN
+			, A.BOARD_COMMENT_NM AS BOARD_COMMENT_NM
+			, A.BOARD_COMMENT_YN AS BOARD_COMMENT_YN
+			, A.SHOW_MAIN_YN AS SHOW_MAIN_YN
+			, A.CATEGORY AS CATEGORY
+			, A.SORT_SEQ AS SORT_SEQ
+			, A.USE_YN AS USE_YN
+			, A.REG_DT AS REG_DT
+			, B.CODE_NM AS CATEGORY_NM
+		FROM
+			RT_BOARD_GROUP A
+		JOIN
+			(
+			SELECT * FROM RT_CODE_INFO WHERE GROUP_CODE = 'B1100'
+			) B
+		ON A.CATEGORY = B.CODE_ID
+		WHERE
+			A.BOARD_NM IN (#{boardNm},#{boardAppraisalNm},#{boardCommentNm})
+			OR A.BOARD_APPRAISAL_NM IN (#{boardNm},#{boardAppraisalNm},#{boardCommentNm})
+			OR A.BOARD_ID = #{boardId}
+	</select>
+	<select id="selectBoardGroupList" parameterType="boardGroup" resultMap="resultMap-boardGroup">
+		SELECT 
+			A.BOARD_NM AS BOARD_NM
+			, A.BOARD_ID AS BOARD_ID
+			, A.BOARD_KOR AS BOARD_KOR
+			, A.BOARD_DETAIL AS BOARD_DETAIL
+			, A.BOARD_APPRAISAL_NM AS BOARD_APPRAISAL_NM
+			, A.BOARD_APPRAISAL_YN AS BOARD_APPRAISAL_YN
+			, A.BOARD_COMMENT_NM AS BOARD_COMMENT_NM
+			, A.BOARD_COMMENT_YN AS BOARD_COMMENT_YN
+			, A.SHOW_MAIN_YN AS SHOW_MAIN_YN
+			, A.CATEGORY AS CATEGORY
+			, A.SORT_SEQ AS SORT_SEQ
+			, A.USE_YN AS USE_YN
+			, A.REG_DT AS REG_DT
+			, B.CODE_NM AS CATEGORY_NM
+		FROM
+			RT_BOARD_GROUP A
+		JOIN
+			(
+			SELECT * FROM RT_CODE_INFO WHERE GROUP_CODE = 'B1100'
+			) B
+		ON A.CATEGORY = B.CODE_ID
+		<where>
+			<if test="boardNm != null">
+			A.BOARD_NM = #{boardNm}
+			</if>
+			<if test="boardId != null">
+			AND A.BOARD_ID = #{boardId}
+			</if>
+			<if test="boardKor != null">
+			AND A.BOARD_KOR = #{boardKor}
+			</if>
+			<if test="boardDetail != null">
+			AND A.BOARD_DETAIL = #{boardDetail}
+			</if>
+			<if test="boardCommentYn != null">
+			AND A.BOARD_COMMENT_YN = #{boardCommentYn}
+			</if>
+			<if test="showMainYn != null">
+			AND A.SHOW_MAIN_YN = #{showMainYn}
+			</if>
+			<if test="category != null">
+			AND A.CATEGORY = #{category}
+			</if>
+			<if test="useYn != null">
+			AND A.USE_YN = UPPER(#{useYn})
+			</if>
+		</where>
+		<if test="sortField != null and sortValue != null">
+		ORDER BY A.${sortField} ${sortValue}	
+		</if>
+	</select>
+	
+	<insert id="insertBoardGroup" parameterType="boardGroup">
+		INSERT INTO RT_BOARD_GROUP 
+		(
+			BOARD_NM
+			, BOARD_ID
+			, BOARD_KOR
+			, BOARD_DETAIL
+			, BOARD_APPRAISAL_NM
+			, BOARD_APPRAISAL_YN
+			, BOARD_COMMENT_NM
+			, BOARD_COMMENT_YN
+			, SHOW_MAIN_YN
+			, CATEGORY
+			, SORT_SEQ
+			, USE_YN
+			, REG_DT
+		) 
+		VALUES
+		(
+			UPPER(#{boardNm})
+			, #{boardId}
+			, #{boardKor}
+			, #{boardDetail}
+			, #{boardAppraisalNm}
+			, #{boardAppraisalYn}
+			, #{boardCommentNm}
+			, #{boardCommentYn}
+			, #{showMainYn}
+			, #{category}
+			, #{sortSeq}
+			, #{useYn}
+			, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteBoardGroup" parameterType="boardGroup">
+		DELETE
+		FROM 
+			RT_BOARD_GROUP 
+		<where>
+			<if test="boardNm != null">
+			UPPER(BOARD_NM) = UPPER(#{boardNm})
+			</if>
+			<if test="boardId != null">
+			AND BOARD_ID = #{boardId}
+			</if>
+		</where>
+	</delete>
+	
+	<update id="updateBoardGroup" parameterType="boardGroup">
+		UPDATE 
+			RT_BOARD_GROUP
+		SET
+			BOARD_KOR = #{boardKor}
+			, BOARD_DETAIL = #{boardDetail}
+			<if test="boardAppraisalYn != null">
+			, BOARD_APPRAISAL_YN = UPPER(#{boardAppraisalYn})
+			</if>
+			<if test="boardCommentYn != null">
+			, BOARD_COMMENT_YN = UPPER(#{boardCommentYn})
+			</if>
+			<if test="showMainYn != null">
+			, SHOW_MAIN_YN = UPPER(#{showMainYn})
+			</if>
+			<if test="category != null">
+			, CATEGORY = #{category}
+			</if>
+			<if test="sortSeq != null">
+			, SORT_SEQ = #{sortSeq}
+			</if>
+			<if test="useYn != null">
+			, USE_YN = #{useYn}
+			</if>
+		WHERE
+			UPPER(BOARD_NM) = UPPER(#{boardNm})
+	</update>
+	
+</mapper>

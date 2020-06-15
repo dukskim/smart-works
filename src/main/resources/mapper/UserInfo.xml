@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.UserInfoMapper">
+	
+	<resultMap id="resultMap-userInfo" type="userInfo">
+		<result column="USER_ID" property="userId" />
+		<result column="USER_NM" property="userNm" />
+		<result column="PWD" property="pwd" />
+		<result column="NICK_NM" property="nickNm" />
+		<result column="EMAIL" property="email" />
+		<result column="POINT" property="point" />
+		<result column="USER_LEVEL" property="userLevel" />
+		<result column="TEL_NUM" property="telNum" />
+		<result column="MOBILE" property="mobile" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="REG_STATUS" property="regStatus" />
+		<result column="REG_DT" property="regDt" />
+	</resultMap>
+	
+	
+	<select id="selectCntLoginSuccess" parameterType="userInfo" resultMap="resultMap-userInfo">
+		SELECT
+			USER_ID			
+			, USER_NM				
+			, PWD				
+			, NICK_NM		
+			, EMAIL			
+			, POINT			
+			, USER_LEVEL		
+			, TEL_NUM			
+			, MOBILE			
+			, DEPT_ID			
+			, REG_STATUS		
+			, REG_DT						
+		FROM
+			RT_USER_INFO
+		WHERE 
+			USER_ID = #{userId}
+		AND
+			PWD = #{pwd}
+	</select>
+	
+	<select id="selectUserInfo" parameterType="String" resultMap="resultMap-userInfo">
+		SELECT
+			USER_ID			
+			, USER_NM				
+			, PWD				
+			, NICK_NM		
+			, EMAIL			
+			, POINT			
+			, USER_LEVEL		
+			, TEL_NUM			
+			, MOBILE			
+			, DEPT_ID			
+			, REG_STATUS		
+			, REG_DT						
+		FROM
+			RT_USER_INFO
+		WHERE 
+			USER_ID = #{userId}
+	</select>
+	<select id="selectUserInfoList" parameterType="userInfo" resultMap="resultMap-userInfo">
+		SELECT
+			USER_ID			
+			, USER_NM				
+			, PWD				
+			, NICK_NM		
+			, EMAIL			
+			, POINT			
+			, USER_LEVEL		
+			, TEL_NUM			
+			, MOBILE			
+			, DEPT_ID			
+			, REG_STATUS		
+			, REG_DT						
+		FROM
+			RT_USER_INFO
+		<where>
+			<if test="userId != null">
+			USER_ID = #{userId}
+			</if>
+			<if test="userNm != null">
+			AND USER_NM = #{userNm}
+			</if>
+			<if test="nickNm != null">
+			AND NICK_NM = #{nickNm}
+			</if>
+			<if test="email != null">
+			AND EMAIL = #{email}
+			</if>
+			<if test="point != -1">
+			AND POINT = #{point}
+			</if>
+			<if test="userLevel != -1">
+			AND USER_LEVEL = #{userLevel}
+			</if>
+			<if test="telNum != null">
+			AND TEL_NUM = #{telNum}
+			</if>
+			<if test="mobile != null">
+			AND MOBILE = #{mobile}
+			</if>
+			<if test="deptId != null">
+			AND DEPT_ID = #{deptId}
+			</if>
+			<if test="regStatus != null">
+			AND REG_STATUS = #{regStatus}
+			</if>
+		</where> 
+		ORDER BY REG_DT DESC, USER_ID ASC
+		<if test="chkPaging">
+		<include refid="Base.paging"/>
+		</if>
+
+	</select>
+	<select id="selectUserInfoListCnt" parameterType="userInfo" resultType="int">
+		SELECT
+			COUNT(*)			
+		FROM
+			RT_USER_INFO
+		<where>
+			<if test="userId != null">
+			USER_ID = #{userId}
+			</if>
+			<if test="userNm != null">
+			AND USER_NM = #{userNm}
+			</if>
+			<if test="nickNm != null">
+			AND NICK_NM = #{nickNm}
+			</if>
+			<if test="email != null">
+			AND EMAIL = #{email}
+			</if>
+			<if test="point != -1">
+			AND POINT = #{point}
+			</if>
+			<if test="userLevel != -1">
+			AND USER_LEVEL = #{userLevel}
+			</if>
+			<if test="telNum != null">
+			AND TEL_NUM = #{telNum}
+			</if>
+			<if test="mobile != null">
+			AND MOBILE = #{mobile}
+			</if>
+			<if test="deptId != null">
+			AND DEPT_ID = #{deptId}
+			</if>
+			<if test="regStatus != null">
+			AND REG_STATUS = #{regStatus}
+			</if>
+		</where> 
+		ORDER BY REG_DT DESC, USER_ID ASC
+	</select>
+	
+	<insert id="addUser" parameterType="userInfo">
+		INSERT INTO RT_USER_INFO
+		(
+			USER_ID,
+			USER_NM,
+			PWD,
+			NICK_NM,
+			EMAIL,
+			POINT,
+			USER_LEVEL,
+			TEL_NUM,
+			MOBILE,
+			DEPT_ID,
+			REG_STATUS,
+			REG_DT		
+		)
+		VALUES
+		(
+			#{userId},
+			#{userNm},
+			#{pwd},
+			#{nickNm},
+			#{email},
+			#{point},
+			#{userLevel},
+			#{telNum},
+			#{mobile},
+			#{deptId},
+			#{regStatus},
+			NOW()
+		)
+	</insert>
+	
+	<delete id="deleteUser" parameterType="String">
+		DELETE
+		FROM
+			RT_USER_INFO
+		WHERE
+			USER_ID = #{value}
+	</delete>
+
+	<update id="updateUser" parameterType="userInfo">
+	<![CDATA[ 
+		UPDATE RT_USER_INFO SET
+			USER_NM = #{userNm},
+			PWD = #{pwd},
+			NICK_NM = #{nickNm},
+			EMAIL = #{email},
+			TEL_NUM = #{telNum},
+			MOBILE = #{mobile},
+			DEPT_ID = #{deptId}
+		WHERE
+			USER_ID = #{userId}
+	]]>
+	</update>
+
+</mapper>

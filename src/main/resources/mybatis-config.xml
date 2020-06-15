@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.dhkim.sworks.sql.domain.Test" alias="test" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.UserInfo" alias="userInfo" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.BoardGroup" alias="boardGroup" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.Board" alias="board" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.BoardAttach" alias="boardAttach" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.CodeInfo" alias="codeInfo" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.BoardAppraisal" alias="boardAppraisal" />
+		<typeAlias type="com.dhkim.sworks.sql.domain.BoardComment" alias="boardComment" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="mapper/Test.xml" />
+		<mapper resource="mapper/Base.xml" />
+		<mapper resource="mapper/UserInfo.xml" />
+		<mapper resource="mapper/Board.xml" />
+		<mapper resource="mapper/BoardAttach.xml" />
+		<mapper resource="mapper/BoardGroup.xml" />
+		<mapper resource="mapper/CodeInfo.xml" />
+		<mapper resource="mapper/BoardAppraisal.xml" />
+		<mapper resource="mapper/BoardComment.xml" />
+	</mappers>
+</configuration>

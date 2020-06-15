@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+
+/* 게시판 내용 */
+.viewContent{width:746px; padding:10px; border:1px solid #DFE8F7; word-wrap:break-word; word-break:break-all;min-height:190px;overflow: auto;}
+.viewComent{width:600px; word-wrap:break-word; word-break:break-all;}
+.viewAttach{width:700px; padding-left:20px; padding-top:2px; padding-bottom:2px; word-wrap:break-word; word-break:break-all;}
+.viewTitle{word-wrap:break-word; word-break:break-all;margin-bottom: 6px;}

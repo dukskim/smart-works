@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dhkim.sworks.sql.mapper.BoardAppraisalMapper">
+	<resultMap type="boardAppraisal" id="resultMap-boardAppraisal">
+		<result column="BOARD_SEQ" 			property="boardSeq"/>
+		<result column="USER_ID" 			property="userId"/>
+		<result column="APPRAISAL_TYPE" 	property="appraisalType"/>
+		<result column="REG_DT" 			property="regDt"/>
+	</resultMap>
+	
+	<update id="create" parameterType="String">
+		CREATE TABLE ${value}
+		(
+			BOARD_SEQ		BIGINT			NOT NULL		COMMENT '게시글번호',	
+			USER_ID			VARCHAR(20)		NOT NULL		COMMENT '사용자아이디', 
+			APPRAISAL_TYPE	CHAR(1)			DEFAULT '1'		COMMENT '평가타입 : 1 추천 2 비공감',
+			REG_DT			DATETIME						COMMENT '등록일시',
+			PRIMARY KEY(BOARD_SEQ, USER_ID)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	</update>
+	
+	<update id="drop" parameterType="String">
+		DROP TABLE ${value}
+	</update>
+
+	<select id="selectBoardAppraisalList" parameterType="boardAppraisal" resultMap="resultMap-boardAppraisal">
+		SELECT
+			BOARD_SEQ
+			, USER_ID
+			, APPRAISAL_TYPE
+			, REG_DT
+		FROM
+			${boardAppraisalNm}
+		<where>
+			<if test="boardSeq != -1">
+			BOARD_SEQ = #{boardSeq}
+			</if>
+			<if test="userId != null">
+			AND USER_ID = #{userId}
+			</if>
+			<if test="appraisalType != null">
+			AND APPRAISAL_TYPE = #{appraisalType}
+			</if>
+		</where>
+			
+	</select>
+	
+	<insert id="insertBoardAppraisal" parameterType="boardAppraisal">
+		INSERT INTO ${boardAppraisalNm}
+		(
+			BOARD_SEQ
+			, USER_ID
+			, APPRAISAL_TYPE
+			, REG_DT
+		)
+		VALUES
+		(
+			#{boardSeq}
+			, #{userId}
+			<choose>
+			<when test="appraisalType == null">
+			, '1' 
+			</when>
+			<otherwise>
+			, #{appraisalType} 
+			</otherwise>
+			</choose>
+			, NOW()	
+		)
+	</insert>
+	
+	<delete id="deleteBoardAppraisal" parameterType="boardAppraisal">
+		DELETE FROM ${boardAppraisalNm}
+		<where>
+			<if test="boardSeq != -1">
+			BOARD_SEQ = #{boardSeq}
+			</if>
+			<if test="userId != null">
+			AND USER_ID = #{userId}
+			</if>
+			<if test="appraisalType != null">
+			AND APPRAISAL_TYPE = #{appraisalType}
+			</if>
+		</where>
+	</delete>
+</mapper>
