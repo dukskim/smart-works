@@ -29,8 +29,8 @@ public class BoardGroupController {
 	@Autowired
 	private BoardGroupService boardGroupService;
 
-	@Value("${config.img.upload.url}")
-	private String imgUrl;
+//	@Value("${config.img.upload.url}")
+//	private String imgUrl;
 	
 	@RequestMapping("/admin/addBoardGroupView.do")
 	public ModelAndView addBoardGroupView() throws Exception {
@@ -91,10 +91,11 @@ public class BoardGroupController {
 		
 		String[] boardIds = req.getParameterValues("boardId");
 		
-		String imgPath =  req.getSession().getServletContext().getRealPath("/") + imgUrl;
+//		String imgPath =  req.getSession().getServletContext().getRealPath("/") + imgUrl;
 		
 		for (int i = 0; i < boardIds.length; i++) {
-			boardGroupService.removeBoardGroup(boardIds[i], imgPath);
+//			boardGroupService.removeBoardGroup(boardIds[i], imgPath);
+			boardGroupService.removeBoardGroup(boardIds[i]);
 		}
 		return new ModelAndView("redirect:/admin/boardGroupListView.do");
 	}

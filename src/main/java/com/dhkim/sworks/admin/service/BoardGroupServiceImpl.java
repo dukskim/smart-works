@@ -1,6 +1,8 @@
 package com.dhkim.sworks.admin.service;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -40,7 +42,13 @@ public class BoardGroupServiceImpl extends CommonService implements BoardGroupSe
 	private BoardGroupMapper boardGroupMapper;
 	
 	@Value("${config.file.upload.path}")
+	private String uploadFilePath;
+
+	@Value("${config.file.base.path}")
 	private String baseFilePath;
+	
+	@Value("${config.file.editor.path}")
+	private String imgFilePath;
 	
 	@Override
 	public BoardGroup getBoardGroup(BoardGroup boardGroup) throws SQLException {
@@ -75,7 +83,7 @@ public class BoardGroupServiceImpl extends CommonService implements BoardGroupSe
 	}
 	
 	@Override
-	public void removeBoardGroup(String boardId, String imgPath) throws Exception {
+	public void removeBoardGroup(String boardId) throws Exception {
 		BoardGroup boardGroup = new BoardGroup();
 		boardGroup.setBoardId(boardId);
 		boardGroup = boardGroupMapper.selectBoardGroup(boardGroup);
@@ -103,14 +111,20 @@ public class BoardGroupServiceImpl extends CommonService implements BoardGroupSe
 			
 			// 조회하여 삭제하는 방식에서 아래방식으로 변경함
 			// 실제 첨부파일 삭제 - 폴더 및 하위 파일삭제(boardId 명으로 폴더생성하여 해당 파일을 저장하였으므로 해당이름으로 삭제)
-			String filePath = baseFilePath.replace("/", File.separator);
-			FileControlUtil.deleteDirectory(filePath + File.separator + boardGroup.getBoardId());
+			String filePath = baseFilePath + "/" + uploadFilePath;
+			String delFilePath = filePath + "/" + boardGroup.getBoardId();
+			Path path = Paths.get(delFilePath);
+			delFilePath = path.toString();
+			FileControlUtil.deleteDirectory(delFilePath);
 
 			// 이미지 업로드 폴더 삭제
-			filePath = imgPath.replace("/", File.separator);
-			FileControlUtil.deleteDirectory(imgPath + File.separator + boardGroup.getBoardId());
-			
-		}		
+			String imgPath = baseFilePath + "/" + imgFilePath;
+			String delImgPath = imgPath + "/" + boardGroup.getBoardId();
+			Path ipath = Paths.get(delImgPath);
+			delImgPath = ipath.toString();
+			FileControlUtil.deleteDirectory(delImgPath);
+
+		}
 	}
 	
 	@Override
