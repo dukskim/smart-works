@@ -9,9 +9,9 @@ work/
 ### STS ###
 .apt_generated
 !.classpath
-.factorypath
+!.factorypath
 !.project
-.settings
+!.settings
 .springBeans
 .sts4-cache
 
