@@ -8,7 +8,9 @@
  */
 package com.dhkim.sworks.board.service;
 
+import java.nio.file.Path;
 import java.io.File;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,8 +25,12 @@ import com.dhkim.sworks.sql.domain.BoardGroup;
 import com.dhkim.sworks.sql.mapper.BoardAttachMapper;
 import com.dhkim.sworks.sql.mapper.BoardCommentMapper;
 import com.dhkim.sworks.sql.mapper.BoardMapper;
+
+import ch.qos.logback.classic.Logger;
+
 import com.dhkim.sworks.sql.mapper.BoardGroupMapper;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,7 +41,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly=false,propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
 public class BoardServiceImpl extends CommonService implements BoardService {
-	
+
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	private BoardGroupService boardGroupService;
 	
@@ -57,8 +65,12 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 	@Autowired
 	private BoardGroupMapper boardGroupMapper;
 	
-	@Value("${config.file.upload.path}")
+	@Value("${config.file.base.path}")
 	private String baseFilePath;
+
+	@Value("${config.file.upload.path}")
+	private String uploadFilePath;
+
 	
 	@Override
 	public void addBoard(Board board) throws Exception {
@@ -100,7 +112,7 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 		BoardGroup bg = boardGroupService.getBoardGroup(board.getBoardId());
 		board.setBoardNm(bg.getBoardNm());
 		String userId = board.getUserId();
-		System.out.println("aaaaa userId:"+userId);
+		logger.debug("aaaaa userId:"+userId);
 		board.setUserId(null); // 관리자가 변경하는 경우가 있어서 파라미터로 userId 넘어갈 경우 게시물을 못찾는경우생김
 		Board bd = getBoard(board);
 		bd.setBoardContent(board.getBoardContent());
@@ -120,7 +132,9 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 			// 디렉토리 체크
 			log.debug("File Upload Directory Check !!!");
 			
-			String saveFilePath = baseFilePath + "/" + board.getBoardId() + "/" + board.getBoardSeq();
+			String saveFilePath = baseFilePath + "/" + uploadFilePath + "/" + board.getBoardId() + "/" + board.getBoardSeq();
+			Path path = Paths.get(saveFilePath);
+			saveFilePath = path.toString();
 			log.debug("saveFilePath:"+saveFilePath);
 			File realUploadDir = new File(saveFilePath); // 업로드 폴더 위치
 			
@@ -133,7 +147,10 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 					File savefile = null;
 					do {
 						String fileName = System.currentTimeMillis() + uploadFile.getOriginalFilename();
-						savefile = new File(saveFilePath + "/" + fileName);
+						String svf = saveFilePath + "/" + fileName;
+						Path svfpath = Paths.get(svf);
+						svf = svfpath.toString();
+						savefile = new File(svf);
 					} while (savefile.exists());
 					
 					log.debug("Upload Orginal File Name : " + uploadFile.getName());
@@ -237,8 +254,8 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 						file.delete();
 					}
 				}
-				
-				FileControlUtil.deleteDirectory(baseFilePath + "/" + board.getBoardId() + "/" + bod.getBoardSeq());
+				Path path = Paths.get(baseFilePath + "/" + uploadFilePath + "/" + board.getBoardId() + "/" + bod.getBoardSeq());
+				FileControlUtil.deleteDirectory(path.toString());
 				
 				// 하위 게시글의 평가목록 삭제
 				BoardAppraisal boardAppraisal = new BoardAppraisal();
@@ -254,7 +271,7 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 				
 				// 하위 게시글 삭제
 				bod.setBoardNm(board.getBoardNm());
-				boardMapper.removeBoard(bod);
+				boardMapper.deleteBoard(bod);
 			}
 		}
 		
@@ -286,10 +303,11 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 				file.delete();
 			}
 		}
-		FileControlUtil.deleteDirectory(baseFilePath + "/" + board.getBoardId() + "/" + board.getBoardSeq());
+		Path path = Paths.get(baseFilePath + "/" + uploadFilePath + "/" + board.getBoardId() + "/" + board.getBoardSeq());
+		FileControlUtil.deleteDirectory(path.toString());
 		
 		// 게시글 삭제
-		boardMapper.removeBoard(board);
+		boardMapper.deleteBoard(board);
 	}
 
 	@Override
@@ -306,7 +324,8 @@ public class BoardServiceImpl extends CommonService implements BoardService {
 		}
 		
 		// 파일이 없으면 디렉토리 삭제
-		String path = baseFilePath + "/" + ba.getBoardId() + "/" + ba.getBoardSeq();
+		String spath = baseFilePath + "/" + uploadFilePath + "/" + ba.getBoardId() + "/" + ba.getBoardSeq();
+		String path = Paths.get(spath).toString();
 		if (!FileControlUtil.isExistFileInDirectory(path)){
 			FileControlUtil.deleteDirectory(path);
 		}

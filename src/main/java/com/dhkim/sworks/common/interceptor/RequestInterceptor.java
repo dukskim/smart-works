@@ -18,7 +18,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 		logger.debug("============RequestInterceptor Start==================");
 		logger.debug("getContextPath ============== [" + request.getContextPath() + "]");
 		logger.debug("getRequestURI =============== [" + request.getRequestURI() + "]");
-		//String[] uriArr = request.getRequestURI().replace("/WEB-INF/jsp/", "/").replace("//", "/").substring(1)
+		//String[] uriArr = request.getRequestURI().replace("/WEB-INF/jsp/", "/").replaceAll("/+", "/").substring(1)
 		//		.split("/");
 		//logger.debug("========uriArr[0] = " + uriArr[0]);
 		logger.debug("============RequestInterceptor End==================");

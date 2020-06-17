@@ -54,7 +54,7 @@ public interface BoardGroupService {
 	 * @param imgPath
 	 * @throws Exception
 	 */
-	public void removeBoardGroup(String boardId, String imgPath) throws Exception;
+	public void removeBoardGroup(String boardId) throws Exception;
 	
 	/**
 	 * @param boardGroup

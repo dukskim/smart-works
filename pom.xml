@@ -11,6 +11,7 @@
 	<groupId>com.dhkim.sworks</groupId>
 	<artifactId>sworks</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>smart-wokrs</name>
 	<description>smart-works project for Spring Boot</description>
 

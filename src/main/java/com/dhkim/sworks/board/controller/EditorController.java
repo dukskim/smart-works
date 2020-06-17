@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dhkim.sworks.board.bean.PhotoVo;
+import com.dhkim.sworks.common.util.FileControlUtil;
 
 import ch.qos.logback.classic.Logger;
 
@@ -35,8 +38,10 @@ public class EditorController {
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	// 이미지 업로드 경로를 설정값으로 정한다. ----------------------
-	@Value("${config.img.upload.url}")
-	private String imgUrl;
+	@Value("${config.file.editor.path}")
+	private String imgFilePath;
+	@Value("${config.file.base.path}")
+	private String baseFilePath;
 	//-------------------------------------------------------------------------------------------
 	
 	/**
@@ -57,7 +62,7 @@ public class EditorController {
 				String original_name = vo.getFiledata().getOriginalFilename();
 				String ext = original_name.substring(original_name.lastIndexOf(".")+1);
 				//파일 기본경로
-				String defaultPath = request.getSession().getServletContext().getRealPath("/");
+				//String defaultPath = request.getSession().getServletContext().getRealPath("/");
 				//파일 기본경로 _ 상세경로
 //				String path = defaultPath + "resource_file" + File.separator + "photo_upload" + File.separator + menuPath;
 				// 위 경로에서 게시판ID별로 이미지경로를 만든다.(세션의 게시판ID) ----------------------
@@ -66,26 +71,28 @@ public class EditorController {
 				if (menu != null && menu != ""){
 					menuPath = menu + "/";
 				}
-				String imgPath = imgUrl.replace("/", File.separator);
-				String imgMenuPath = menuPath.replace("/", File.separator);
+				String imgPath = baseFilePath + "/" + imgFilePath;
 				//파일 기본경로 _ 상세경로
-				String path = defaultPath + imgPath + File.separator + imgMenuPath;
-				path = path.replace(File.separator + File.separator, File.separator);
-				logger.debug("path:"+path);
+				String directPath = imgPath + "/"+ menuPath;
+				Path strpath = Paths.get(directPath);
+				directPath = strpath.toString();
+				logger.debug("path:"+directPath);
 				//-------------------------------------------------------------------------------------------
-				File file = new File(path);
+				File file = new File(directPath);
 				//디렉토리 존재하지 않을경우 디렉토리 생성
-				if(!file.exists()) {
-					file.mkdirs();
-				}
+				FileControlUtil.createDirectory(file);
+
 				//서버에 업로드 할 파일명(한글문제로 인해 원본파일은 올리지 않는것이 좋음)
 				String realname = UUID.randomUUID().toString() + "." + ext;
 				///////////////// 서버에 파일쓰기 ///////////////// 
-				vo.getFiledata().transferTo(new File(path+realname));
+				vo.getFiledata().transferTo(new File(directPath + File.separator + realname));
 //				file_result += "&bNewLine=true&sFileName="+original_name+"&sFileURL=/resource_file/photo_upload/"+realname;
 				// 위 경로에서 게시판ID별로 이미지경로를 만든다.(세션의 게시판ID) ----------------------
-				file_result += "&bNewLine=true&sFileName="+original_name+"&sFileURL=/resource_file/photo_upload/"+menuPath+realname;
-				file_result = file_result.replace("//", "/");
+				String sfileurl = imgFilePath + "/" + menuPath + "/" + realname;
+				sfileurl = sfileurl.replace(File.separator, "/");
+				sfileurl = sfileurl.replaceAll("/+", "/");
+				file_result += "&bNewLine=true&sFileName="+original_name+"&sFileURL="+sfileurl;
+				file_result = file_result.replaceAll("/+", "/");
 				//-------------------------------------------------------------------------------------------
 			} else {
 				file_result += "&errstr=error";
@@ -115,7 +122,7 @@ public class EditorController {
 			//확장자를소문자로 변경
 			filename_ext = filename_ext.toLowerCase();
 			//파일 기본경로
-			String dftFilePath = request.getSession().getServletContext().getRealPath("/");
+			//String dftFilePath = request.getSession().getServletContext().getRealPath("/");
 //			//파일 기본경로 _ 상세경로
 //			String filePath = dftFilePath + "resource_file" + File.separator + "photo_upload" + File.separator;
 			// 위 경로에서 게시판ID별로 이미지경로를 만든다.(세션의 게시판ID) ----------------------
@@ -124,22 +131,21 @@ public class EditorController {
 			if (menu != null && menu != ""){
 				menuPath = menu + "/";
 			}
-			String imgPath = imgUrl.replace("/", File.separator);
-			String imgMenuPath = menuPath.replace("/", File.separator);
+			String imgPath = baseFilePath + "/" + imgFilePath;
 			//파일 기본경로 _ 상세경로
-			String filePath = dftFilePath + imgPath + File.separator + imgMenuPath;
-			filePath = filePath.replace(File.separator + File.separator, File.separator);
+			String filePath = imgPath + "/" + menuPath;
+			Path strpath = Paths.get(filePath);
+			filePath = strpath.toString();
 			logger.debug("path:"+filePath);
 			//-------------------------------------------------------------------------------------------
 			File file = new File(filePath);
-			if(!file.exists()) {
-				file.mkdirs();
-			}
+			FileControlUtil.createDirectory(file);
+
 			String realFileNm = "";
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 			String today= formatter.format(new java.util.Date());
 			realFileNm = today+UUID.randomUUID().toString() + filename.substring(filename.lastIndexOf("."));
-			String rlFileNm = filePath + realFileNm;
+			String rlFileNm = filePath + File.separator + realFileNm;
 			///////////////// 서버에 파일쓰기 ///////////////// 
 			InputStream is = request.getInputStream();
 			OutputStream os=new FileOutputStream(rlFileNm);
@@ -160,8 +166,11 @@ public class EditorController {
 			sFileInfo += "&sFileName="+ filename;;
 //			sFileInfo += "&sFileURL="+"/resource_file/photo_upload/"+realFileNm;
 			// 위 경로에서 게시판ID별로 이미지경로를 만든다.(세션의 게시판ID) ----------------------
-			sFileInfo += "&sFileURL="+"/resource_file/photo_upload/"+menuPath+realFileNm;
-			sFileInfo = sFileInfo.replace("//", "/");
+			String sfileurl = imgFilePath + "/" + menuPath + "/" + realFileNm;
+			sfileurl = sfileurl.replace(File.separator, "/");
+			sfileurl = sfileurl.replaceAll("/+", "/");
+			sFileInfo += "&sFileURL=" + sfileurl;
+			sFileInfo = sFileInfo.replaceAll("/+", "/");
 			//-------------------------------------------------------------------------------------------
 			
 			PrintWriter print = response.getWriter();

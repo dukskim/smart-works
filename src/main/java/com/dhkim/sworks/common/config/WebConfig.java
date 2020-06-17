@@ -1,8 +1,10 @@
 package com.dhkim.sworks.common.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.dhkim.sworks.common.interceptor.LoginCheckInterceptor;
@@ -17,7 +19,10 @@ public class WebConfig implements WebMvcConfigurer {
 			"/test/**",
 			"/error/**"
 	};
-
+	
+	private final String uploadFullPath;
+	private final String resourcePath;
+	
 	@Autowired
 	private LoginCheckInterceptor loginCheckInterceptor;
 
@@ -37,4 +42,17 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(requestInterceptor)
 			.addPathPatterns("/**");
 	}
+	
+	public WebConfig(@Value("${config.file.base.path}") String baseFilePath, @Value("${config.file.editor.path}") String imgFilePath) {
+		this.uploadFullPath = baseFilePath.replace("\\", "/");
+		this.resourcePath = imgFilePath.replace("\\", "/");
+	}
+	
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler((resourcePath + "/**").replaceAll("/+", "/"))
+		.addResourceLocations("file:///" + (uploadFullPath + "/" + resourcePath + "/").replaceAll("/+", "/"));
+		WebMvcConfigurer.super.addResourceHandlers(registry);
+	}
+	
 }

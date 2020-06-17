@@ -8,7 +8,9 @@
  */
 package com.dhkim.sworks.board.controller;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,6 @@ import com.dhkim.sworks.board.service.BoardAppraisalService;
 import com.dhkim.sworks.board.service.BoardCommentService;
 import com.dhkim.sworks.board.service.BoardService;
 import com.dhkim.sworks.common.util.PageUtil;
-import com.dhkim.sworks.common.view.DownloadFile;
 import com.dhkim.sworks.sql.domain.Board;
 import com.dhkim.sworks.sql.domain.BoardAppraisal;
 import com.dhkim.sworks.sql.domain.BoardAttach;
@@ -30,6 +31,11 @@ import com.dhkim.sworks.sql.domain.BoardGroup;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,9 +56,6 @@ public class BoardController {
 	
 	@Autowired
 	private BoardCommentService boardCommentService;
-	
-	@Value("${config.file.upload.path}")
-	private String baseFilePath;
 	
 	@Value("${config.board.page.count}")
 	private int pageCount;
@@ -266,14 +269,22 @@ public class BoardController {
 	}
 	
 	@RequestMapping("/board/fileDownload.do")
-	public ModelAndView fileDownload(@ModelAttribute("BoardAttach") BoardAttach boardAttach) throws Exception {
+	public ResponseEntity<Resource> fileDownload(@ModelAttribute("BoardAttach") BoardAttach boardAttach) throws Exception {
 
 		BoardAttach ba = boardService.getBoardAttach(boardAttach.getFileId());
-		DownloadFile downloadFile = new DownloadFile(); 
-		downloadFile.setFile(new File(ba.getRealFilePath()));
-		downloadFile.setOrgFileName(ba.getFileNm());
+		//DownloadFile downloadFile = new DownloadFile(); 
+		//downloadFile.setFile(new File(ba.getRealFilePath()));
+		//downloadFile.setOrgFileName(ba.getFileNm());
 
-		return new ModelAndView("downloadView", "downloadFile", downloadFile);
+		Path path = Paths.get(ba.getRealFilePath());
+		String contentType = Files.probeContentType(path);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + ba.getFileNm());
+
+		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 
 	}
 
