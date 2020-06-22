@@ -1,11 +1,3 @@
-/**
- * FileName : BoardAppraisal.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2015. 6. 25.
- */
 package com.dhkim.sworks.sql.domain;
 
 import java.io.Serializable;

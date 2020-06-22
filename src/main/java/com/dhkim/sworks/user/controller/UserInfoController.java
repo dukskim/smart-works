@@ -1,11 +1,3 @@
-/**
- * FileName : UserInfoController.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 2. 16.
- */
 package com.dhkim.sworks.user.controller;
 
 import java.util.HashMap;

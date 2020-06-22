@@ -1,11 +1,3 @@
-/**
- * FileName : FileControlUtil.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 4. 19.
- */
 package com.dhkim.sworks.common.util;
 
 import java.io.File;

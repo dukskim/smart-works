@@ -1,11 +1,3 @@
-/**
- * FileName : BaseCond.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 4. 13.
- */
 package com.dhkim.sworks.sql.domain;
 
 public class BaseCond {

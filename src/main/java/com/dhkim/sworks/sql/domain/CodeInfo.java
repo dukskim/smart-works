@@ -1,11 +1,3 @@
-/**
- * FileName : CodeInfo.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2015. 3. 3.
- */
 package com.dhkim.sworks.sql.domain;
 
 import java.io.Serializable;

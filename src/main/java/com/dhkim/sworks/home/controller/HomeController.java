@@ -1,11 +1,3 @@
-/**
- * FileName : HomeController.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 3. 6.
- */
 package com.dhkim.sworks.home.controller;
 
 import java.util.ArrayList;

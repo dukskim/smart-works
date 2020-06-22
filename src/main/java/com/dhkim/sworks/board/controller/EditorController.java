@@ -1,11 +1,3 @@
-/**
- * FileName : EditorController.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2015. 6. 6.
- */
 package com.dhkim.sworks.board.controller;
 
 import java.io.File;

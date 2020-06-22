@@ -1,11 +1,3 @@
-/**
- * FileName : BoardAppraisalServiceImpl.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2015. 6. 25.
- */
 package com.dhkim.sworks.board.service;
 
 import java.sql.SQLException;

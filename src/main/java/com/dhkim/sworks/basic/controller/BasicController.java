@@ -1,11 +1,3 @@
-/**
- * FileName : BasicController.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 5. 2.
- */
 package com.dhkim.sworks.basic.controller;
 
 import java.util.List;

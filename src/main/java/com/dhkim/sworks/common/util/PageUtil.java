@@ -1,11 +1,3 @@
-/**
- * FileName : PagingUtil.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 5. 14.
- */
 package com.dhkim.sworks.common.util;
 
 import java.util.ArrayList;

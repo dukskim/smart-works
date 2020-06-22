@@ -1,11 +1,3 @@
-/**
- * FileName : BoardService.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 3. 6.
- */
 package com.dhkim.sworks.board.service;
 
 import java.sql.SQLException;

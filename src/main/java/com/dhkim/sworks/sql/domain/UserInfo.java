@@ -1,11 +1,3 @@
-/**
- * FileName : UserInfo.java
- * Comment :
- * 
- * @version : 1.0
- * @author : Kim Deok Hyun
- * @date : 2012. 2. 17.
- */
 package com.dhkim.sworks.sql.domain;
 
 import java.io.Serializable;

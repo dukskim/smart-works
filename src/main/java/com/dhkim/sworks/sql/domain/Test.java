@@ -1,11 +1,3 @@
-/**
- * FileName : Test.java
- * Comment :
- * 
- * @version : 1.0
- * @author : 김덕현
- * @date : 2012. 2. 7.
- */
 package com.dhkim.sworks.sql.domain;
 
 import java.io.Serializable;
