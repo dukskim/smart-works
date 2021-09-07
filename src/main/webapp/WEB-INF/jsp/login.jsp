@@ -7,6 +7,15 @@
 <title>Welcome To SmartPortal</title>
 <link rel="stylesheet" type="text/css" href="/resources/css/cmload.css" >
 <script type="text/javascript" src="/resources/js/jquery-1.7.2.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#pwd').on('keydown', function(key){
+		if (key.keyCode == 13) {
+			document.forms.loginForm.submit();
+		}
+	});
+});
+</script>
 </head>
 <body>
 <form id="loginForm" name="loginForm" action="/login/login.do" method="POST" >
